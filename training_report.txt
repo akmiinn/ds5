@@ -1,0 +1,70 @@
+MEDITATION CLASSIFIER — TRAINING REPORT
+========================================
+Dataset       : /Users/syian/Desktop/ds5/meditation_levels_output.csv
+Samples       : 341
+Subjects      : 60
+Features      : 19
+Feature list  : ['mean_rel_Delta', 'mean_rel_Theta', 'mean_rel_Alpha', 'mean_rel_Beta', 'mean_rel_Gamma', 'std_rel_Delta', 'std_rel_Theta', 'std_rel_Alpha', 'std_rel_Beta', 'std_rel_Gamma', 'ratio_theta_alpha', 'ratio_alpha_beta', 'ratio_delta_alpha', 'ratio_theta_beta', 'ratio_delta_beta', 'ratio_gamma_alpha', 'frontal_alpha_asymm', 'frontal_theta_mean', 'occipital_alpha_mean']
+
+EVALUATION METHOD
+─────────────────
+Subject-Independent GroupKFold (n_splits=5)
+
+WHY THIS METHOD:
+  The dataset contains multiple rows per monk subject. A random train/test split
+  puts rows from the same subject in both halves, so the model learns each
+  person's spectral fingerprint rather than generalising to new users.
+  GroupKFold ensures every test fold contains subjects never seen in that fold's
+  training — directly simulating inference on a new Muse 2 user.
+
+HONEST RESULTS (subject-independent):
+  CV fold scores : [0.957, 0.957, 0.897, 0.912, 0.91]
+  CV mean        : 0.926
+  CV std         : 0.025
+  CV overall     : 0.927  (all folds pooled)
+
+  Expected range for real EEG meditation generalisation: 65-85%
+  Scores above 90% with this dataset likely indicate data leakage.
+
+TRAINING ACCURACY (full dataset, for reference only):
+  0.997  — high because model is evaluated on its own training data
+
+Label distribution:
+0     79
+1    121
+2    114
+3     27
+
+Classification Report — Subject-Independent CV (honest):
+                                              precision    recall  f1-score   support
+
+    Level 0 — Baseline (Beta/Gamma dominant)       0.87      0.90      0.88        79
+          Level 1 — Relaxed (Alpha dominant)       0.92      0.93      0.93       121
+Level 2 — Focused Attention (Theta dominant)       0.97      0.95      0.96       114
+  Level 3 — Deep Meditation (Delta dominant)       0.96      0.89      0.92        27
+
+                                    accuracy                           0.93       341
+                                   macro avg       0.93      0.92      0.92       341
+                                weighted avg       0.93      0.93      0.93       341
+
+
+Feature Importances:
+mean_rel_Alpha          0.105264
+mean_rel_Beta           0.102998
+frontal_theta_mean      0.101472
+mean_rel_Theta          0.101414
+ratio_theta_beta        0.100949
+ratio_alpha_beta        0.077005
+ratio_delta_alpha       0.076225
+mean_rel_Delta          0.075057
+ratio_delta_beta        0.071571
+ratio_theta_alpha       0.046595
+ratio_gamma_alpha       0.035372
+mean_rel_Gamma          0.029544
+occipital_alpha_mean    0.025765
+std_rel_Theta           0.020764
+std_rel_Beta            0.008377
+std_rel_Gamma           0.008183
+std_rel_Alpha           0.007294
+std_rel_Delta           0.003895
+frontal_alpha_asymm     0.002256
